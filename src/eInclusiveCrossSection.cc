@@ -1,4 +1,4 @@
-#include "../include/eInclusiveCrossSection.h"
+#include "eInclusiveCrossSection.hh"
 //________________________________________________________________________
 eInclusiveCrossSection::eInclusiveCrossSection(){
 	Init();

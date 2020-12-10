@@ -1,4 +1,4 @@
-#include "../include/GMp12ElasticFF.hh"
+#include "GMp12ElasticFF.hh"
 //______________________________________________________________________________
 GMp12ElasticFF::GMp12ElasticFF(){
 

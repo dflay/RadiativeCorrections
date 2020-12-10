@@ -1,4 +1,4 @@
-#include "../include/DipoleElasticFF.hh"
+#include "DipoleElasticFF.hh"
 //______________________________________________________________________________
 DipoleElasticFF::DipoleElasticFF(){
 
