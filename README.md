@@ -5,7 +5,7 @@ Radiative corrections for inclusive DIS experiments.  Based on the Fortran RADCO
 Your system needs to have the following:
 - C++11 or higher
 - CMake version 3.9 or higher
-- GNU Scientific Library installed
+- GNU Scientific Library installed (coming soon) 
 
 # Configuration and Building   
 Create a `build` and `install` directory in parallel to the main source directory.  Then change to
