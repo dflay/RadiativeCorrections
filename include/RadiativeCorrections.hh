@@ -59,7 +59,12 @@ class RadiativeCorrections {
       double GetWs(double,double,double); 
       double GetWp(double,double,double);
       double sigma_el(double Es); 
-      double ElasticTail_sigmaEx_Integrand(const double);    
+      double ElasticTail_sigmaEx_Integrand(const double);   
+
+      // elastic radiative correction kinematic factors 
+      double GetX(double Es,double th); 
+      double GetRho(double Es,double th); 
+      double GetEta(double Es,double th); 
 
       eInclusiveCrossSection *fInclXS;
       ElasticFormFactor *fFormFactor;

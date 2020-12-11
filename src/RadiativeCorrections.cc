@@ -605,6 +605,38 @@ double RadiativeCorrections::GetWp(double Es,double Ep,double th){
    return wp;
 }
 //_____________________________________________________________________________________________
+double RadiativeCorrections::GetRho(double Es,double th){
+   // for elastic radiative corrections
+   double Ep     = Kinematics::GetEp_Elastic(Es,th,fMT); 
+   double Q2     = Kinematics::GetQ2(Es,Ep,th);
+   double omega  = Q2/(2.*fMT);  
+   double rho_sq = Q2 + 4.*fMT*fMT + 4.*fMT*omega; 
+   return sqrt(rho_sq);  
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::GetX(double Es,double th){
+   // for elastic radiative corrections
+   // Note: NOT x Bjorken! 
+   double Ep  = Kinematics::GetEp_Elastic(Es,th,fMT); 
+   double Q2  = Kinematics::GetQ2(Es,Ep,th);
+   double q   = sqrt(Q2); 
+   double rho = GetRho(Es,th); 
+   double num = pow(rho+q,2); 
+   double den = 4.*fMT*fMT; 
+   double x   = num/den; 
+   return x;  
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::GetEta(double Es,double th){
+   // lab system recoil factor
+   double thr = th*deg_to_rad; 
+   double COS = cos(thr); 
+   double T1  = Es/fMT; 
+   double T2  = 1.-COS; 
+   double eta = T1*T2; 
+   return eta; 
+}
+//_____________________________________________________________________________________________
 double RadiativeCorrections::Integrate(double (RadiativeCorrections::*f)(const double),double A,double B,double epsilon,int Depth){
    // Adaptive Simpson's Rule
    double C   = (A + B)/2.0;
