@@ -543,7 +543,7 @@ double RadiativeCorrections::sigma_el(double Es){
    double SIN2  = SIN*SIN;
    double TAN2=0;
    if(COS2!=0) TAN2 = SIN2/COS2; 
-   double Ep    = Es/(1 + (2.*Es/fMT)*SIN2);
+   double Ep    = Kinematics::GetEp_Elastic(Es,fThDeg,fMT); 
    double Q2    = Kinematics::GetQ2(Es,Ep,fThDeg); 
    double tau   = Q2/(4.*fMT*fMT); 
    double GE    = fFormFactor->GetGE(Q2);   

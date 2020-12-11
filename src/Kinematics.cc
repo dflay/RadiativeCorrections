@@ -2,6 +2,18 @@
 //______________________________________________________________________________
 namespace Kinematics {
    //________________________________________________________________________
+   double GetEp_Elastic(double Es,double th,double M){
+      // compute elastic scattered electron energy
+      // Es = incident electron energy 
+      // th = e- scattering angle in deg 
+      // M  = mass of target  
+      double thr   = th*deg_to_rad;
+      double SIN   = sin(thr/2.);
+      double SIN2  = SIN*SIN;
+      double Ep    = Es/(1 + (2.*Es/M)*SIN2);
+      return Ep;
+   }
+   //________________________________________________________________________
    double GetQ2(double Es,double Ep,double th){
       double thr  = th*deg_to_rad;
       double SIN  = sin(thr/2.);
@@ -32,7 +44,7 @@ namespace Kinematics {
    }
    //________________________________________________________________________
    double GetEpsilon(double Es,double Ep,double th){
-      double Nu    = Es - Ep; 
+      double Nu    = Es-Ep; 
       double Q2    = GetQ2(Es,Ep,th); 
       double thr   = th*deg_to_rad;
       double TAN   = tan(thr/2.0);
@@ -47,4 +59,4 @@ namespace Kinematics {
       }
       return eps;
    }
-}
+} //::Kinematics 

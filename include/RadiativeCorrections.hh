@@ -58,7 +58,7 @@ class RadiativeCorrections {
       double GetF_soft(); 
       double GetWs(double,double,double); 
       double GetWp(double,double,double);
-      double sigma_el(double); 
+      double sigma_el(double Es); 
       double ElasticTail_sigmaEx_Integrand(const double);    
 
       eInclusiveCrossSection *fInclXS;
