@@ -1,5 +1,5 @@
-#ifndef INCLUSIVE_E_RADIATIVE_CORRECTIONS_HH
-#define INCLUSIVE_E_RADIATIVE_CORRECTIONS_HH
+#ifndef RADIATIVE_CORRECTIONS_HH
+#define RADIATIVE_CORRECTIONS_HH
 
 // a class for applying radiative effects to cross section models, 
 // or unfolding radiative effects from experimental cross section data 
@@ -59,9 +59,10 @@ class RadiativeCorrections {
       double GetWs(double,double,double); 
       double GetWp(double,double,double);
       double sigma_el(double Es); 
+      double sigma_el_tilde(double Es); 
       double ElasticTail_sigmaEx_Integrand(const double);   
 
-      // elastic radiative correction kinematic factors 
+      // elastic peak kinematic factors 
       double GetX(double Es,double th); 
       double GetRho(double Es,double th); 
       double GetEta(double Es,double th); 
@@ -97,6 +98,7 @@ class RadiativeCorrections {
       double ElasticTail_peakApprox();  
       double ElasticTail_exact();  
 
+      // for testing.  will be private once things are finalized 
       double ElasticTail_sigmaP();    
       double ElasticTail_sigmaB();    
       double ElasticTail_sigmaEx();    

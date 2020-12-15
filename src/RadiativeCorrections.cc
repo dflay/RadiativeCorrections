@@ -84,7 +84,8 @@ double RadiativeCorrections::GetTr(double Q2){
    return Tr;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::GetFTilde(double Q2){
+double RadiativeCorrections::GetFTilde(double q2){
+   // NOTE: q2 != Q2 here! Q2 depends on fEs, fEp, fThDeg.  q2 is computed as needed.  
    // General terms
    double M2     = electron_mass*electron_mass;
    double PI2    = PI*PI;
@@ -94,8 +95,8 @@ double RadiativeCorrections::GetFTilde(double Q2){
    double SPENCE = GetSpence(COS2);
    // Individual terms 
    double T1     = 1.0 + 0.5772*fb*fT;
-   double T2     = (2.0*alpha/PI)*( (-14.0/9.0) + (13.0/12.0)*log(Q2/M2) );
-   double T3     = (-1.0)*(alpha/(2.0*PI))*log( pow(fEs/fEp,2.0) );
+   double T2     = (2.0*alpha/PI)*( (-14.0/9.0) + (13.0/12.0)*log(q2/M2) );
+   double T3     = (-1.0)*(alpha/(2.0*PI))*log(fEs/fEp)*log(fEs/fEp);
    double T4     = (alpha/PI)*( (PI2/6.0) - SPENCE );
    // Put it all together
    double FTilde = T1+T2+T3+T4;
@@ -451,7 +452,6 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    } 
    return val;
 }
-
 //___________________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaB(){
    // real bremsstrahlung and ionization loss  
@@ -470,8 +470,7 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    double T1_num = fMT + 2.*(fEs-ws)*SIN2;
    double T1_den = fMT - 2.*fEp*SIN2; 
    if(T1_den!=0) T1 = T1_num/T1_den; 
-   // second term  
-   double FTilde = GetFTilde(Q2);
+   // second term 
    double T2a=0; 
    double T2a_num = fb*fTb*GetPhi(vs);
    double T2a_den = ws; 
@@ -479,8 +478,8 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    double T2b=0; 
    double T2b_num = fXi;
    double T2b_den = 2.*ws*ws; 
-   if(T2b_den!=0) T2b = T2b_num/T2b_den;   
-   double T2_sf = FTilde*sigma_el(fEs-ws);
+   if(T2b_den!=0) T2b = T2b_num/T2b_den;  
+   double T2_sf = sigma_el_tilde(fEs-ws);
    double T2    = T2_sf*(T2a + T2b);  
    // third term
    double T3a=0;
@@ -491,7 +490,7 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    double T3b_num = fXi;
    double T3b_den = 2.*wp*wp; 
    if(T3b_den!=0) T3b = T3b_num/T3b_den;   
-   double T3_sf = FTilde*sigma_el(fEs);  
+   double T3_sf = sigma_el_tilde(fEs);  
    double T3    = T3_sf*(T3a + T3b);  
    // put it together 
    double val = T1*T2 + T3; 
@@ -516,14 +515,13 @@ double RadiativeCorrections::ElasticTail_sigmaP(){
    double T1_den = fMT - 2.*fEp*SIN2; 
    if(T1_den!=0) T1 = T1_num/T1_den; 
    // second term  
-   double FTilde = GetFTilde(Q2);
-   double T2_sf  = FTilde*sigma_el(fEs-ws);
+   double T2_sf  = sigma_el_tilde(fEs-ws);
    double T2_num = fb*Tr*GetPhi(vs); 
    double T2_den = ws;
    double T2=0; 
    if(T2_den!=0) T2 = T2_sf*T2_num/T2_den;
    // third term 
-   double T3_sf  = FTilde*sigma_el(fEs);
+   double T3_sf  = sigma_el_tilde(fEs);
    double T3_num = fb*Tr*GetPhi(vp); 
    double T3_den = wp;
    double T3=0; 
@@ -531,6 +529,15 @@ double RadiativeCorrections::ElasticTail_sigmaP(){
    // put it together 
    double val = T1*T2 + T3; 
    return val;  
+}
+//___________________________________________________________________________________
+double RadiativeCorrections::sigma_el_tilde(double Es){
+   // Phys. Rev. D. 12, 1884 (A55) 
+   double Ep      = Kinematics::GetEp_Elastic(Es,fThDeg,fMT); 
+   double Q2      = Kinematics::GetQ2(Es,Ep,fThDeg);
+   double FTilde  = GetFTilde(Q2); 
+   double sigmaEl = sigma_el(Es);
+   return FTilde*sigmaEl;  
 }
 //___________________________________________________________________________________
 double RadiativeCorrections::sigma_el(double Es){
