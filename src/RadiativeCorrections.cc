@@ -733,7 +733,7 @@ double RadiativeCorrections::ElasticPeak_Z2_MTJ(){
 double RadiativeCorrections::ElasticPeak_DeltaEl_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 3.37 
-   // delta_el term
+   // delta_el term, accounts for nucleon size effects 
    return 0;
 }
 //_____________________________________________________________________________________________
