@@ -644,6 +644,99 @@ double RadiativeCorrections::GetEta(double Es,double th){
    return eta; 
 }
 //_____________________________________________________________________________________________
+double RadiativeCorrections::GetEta_MS(double Es,double Ep){
+   // from Mo & Tsai, Rev Mod Phys 41 205 (1969), pg 208  
+   return Es/Ep;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Delta_MS(){
+   // radiative correction to elastic peak
+   // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z0_MS(){
+   // radiative correction to elastic peak
+   // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
+   // Z^(0) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z1_MS(){
+   // radiative correction to elastic peak
+   // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
+   // Z^(1) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z2_MS(){
+   // radiative correction to elastic peak
+   // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
+   // Z^(2) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Delta_MY(){
+   // radiative correction to elastic peak
+   // from Meister and Yennie 
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z0_MY(){
+   // radiative correction to elastic peak
+   // from Meister and Yennie 
+   // Z^(0) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z1_MY(){
+   // radiative correction to elastic peak
+   // from Meister and Yennie 
+   // Z^(1) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z2_MY(){
+   // radiative correction to elastic peak
+   // from Meister and Yennie 
+   // Z^(2) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Delta_MT(){
+   // radiative correction to elastic peak
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z0_MT(){
+   // radiative correction to elastic peak
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
+   // Z^(0) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z1_MT(){
+   // radiative correction to elastic peak
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
+   // Z^(1) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_Z2_MT(){
+   // radiative correction to elastic peak
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
+   // Z^(2) term  
+   return 0;
+}
+//_____________________________________________________________________________________________
+double RadiativeCorrections::ElasticPeak_DeltaEl_MT(){
+   // radiative correction to elastic peak
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 3.37 
+   // delta_el term
+   return 0;
+}
+//_____________________________________________________________________________________________
 double RadiativeCorrections::Integrate(double (RadiativeCorrections::*f)(const double),double A,double B,double epsilon,int Depth){
    // Adaptive Simpson's Rule
    double C   = (A + B)/2.0;
