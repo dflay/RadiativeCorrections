@@ -711,7 +711,7 @@ double RadiativeCorrections::ElasticPeak_Delta_MTJ_E1THDE(double Es,double th,do
    double T_z0  = ElasticPeak_Z0_MTJ(Es,th,deltaE);  
    double T_z1  = ElasticPeak_Z1_MTJ(Es,th,deltaE);  
    double T_z2  = ElasticPeak_Z2_MTJ(Es,th,deltaE);  
-   double T_del = ElasticPeak_DeltaEl_MTJ(Es,th,deltaE); 
+   double T_del = ElasticPeak_DeltaEl_MTJ(); 
    double res   = T_z0 + fZ*T_z1 + (fZ*fZ)*T_z2 + T_del; 
    return res;
 }
@@ -789,7 +789,7 @@ double RadiativeCorrections::ElasticPeak_Z2_MTJ(double Es,double th,double delta
    double omega   = Q2/(2.*fMT); 
    double E4      = fMT + omega; 
    double p4      = sqrt(E4*E4 - M2); 
-   double beta4   = sqrt(1. - M2/(E4*E4)) 
+   // double beta4   = sqrt(1. - M2/(E4*E4));  
    double eta     = GetEta(E1,th);
    double x       = GetX(E1,th);
    double rho     = GetRho(E1,th); 
