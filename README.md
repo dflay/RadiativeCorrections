@@ -19,7 +19,7 @@ To be able to use the library in your application, you have to set up your envir
 variables to successfully link this library to your application.  In your `bashrc`, define:
 
 ```
-export RADCORSYS=/path/to/UMass-ZC/installation
+export RADCORSYS=/path/to/RadiativeCorrections/installation
 export LD_LIBRARY_PATH=$RADCORSYS/lib:$LD_LIBRARY_PATH
 ```
 
