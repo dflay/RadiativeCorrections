@@ -1,13 +1,13 @@
 #include "RadiativeCorrections.hh"
-//________________________________________________________________________
+//______________________________________________________________________________
 RadiativeCorrections::RadiativeCorrections(){
    Init();
 }
-//________________________________________________________________________
+//______________________________________________________________________________
 RadiativeCorrections::~RadiativeCorrections(){
 
 }
-//________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::Init(){
    fDeltaE   = 0.01;           // in GeV
    fMT       = 0;
@@ -27,14 +27,14 @@ void RadiativeCorrections::Init(){
    fMT       = 0;
    fThreshold = RC::kPion; 
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::SetKinematicVariables(double Es,double Ep,double thDeg){
    // set important variables 
    fEs    = Es; 
    fEp    = Ep; 
    fThDeg = thDeg; 
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateVariables(){
    // update variables that depend on Es, Ep, th, Ta, Tb  
    CalculateEta();
@@ -43,7 +43,7 @@ void RadiativeCorrections::CalculateVariables(){
    CalculateR();
    CalculateCFACT();
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::Radiate(){
    // set important variables 
    fZ     = fInclXS->GetZ();
@@ -67,12 +67,12 @@ double RadiativeCorrections::Radiate(){
 
    return RadXS;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetPhi(double v){
    double phi = 1.0 - v + (3.0/4.0)*v*v;
    return phi;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetTr(double Q2){
    // General terms
    double M2 = electron_mass*electron_mass;
@@ -83,7 +83,7 @@ double RadiativeCorrections::GetTr(double Q2){
    double Tr = T1*T2;
    return Tr;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetFTilde(double q2){
    // NOTE: q2 != Q2 here! Q2 depends on fEs, fEp, fThDeg.  q2 is computed as needed.  
    // General terms
@@ -102,7 +102,7 @@ double RadiativeCorrections::GetFTilde(double q2){
    double FTilde = T1+T2+T3+T4;
    return FTilde;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetEsMin(double Ep){
    double thr   = fThDeg*deg_to_rad;
    double SIN   = sin(thr/2.0);
@@ -121,7 +121,7 @@ double RadiativeCorrections::GetEsMin(double Ep){
    double EsMin = num/denom;
    return EsMin;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetEpMax(double Es){
    double thr   = fThDeg*deg_to_rad;
    double SIN   = sin(thr/2.0);
@@ -140,7 +140,7 @@ double RadiativeCorrections::GetEpMax(double Es){
    double EpMax = num/denom;
    return EpMax;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetSpence(double x){
    // converted from radcor.f: 
    double num=0,denom=0,Index=0;
@@ -160,7 +160,7 @@ double RadiativeCorrections::GetSpence(double x){
 
    return ans;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateEta(){
    double Z23   = pow(fZ,-2.0/3.0);
    double Z13   = pow(fZ,-1.0/3.0);
@@ -168,7 +168,7 @@ void RadiativeCorrections::CalculateEta(){
    double denom = log(183.0*Z13);
    fEta         = num/denom;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateB(){
    double Z13 = pow(fZ,-1.0/3.0);
    double T1  = 1.0;
@@ -176,14 +176,14 @@ void RadiativeCorrections::CalculateB(){
    double T3  = 1.0/log(183.0*Z13);
    fb         = (4.0/3.0)*(T1 + T2*T3);
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateXi(){
    double Z13 = pow(fZ,-1.0/3.0);
    double T1  = PI*electron_mass/(2.0*alpha);
    double T2  = fT/( (fZ+fEta)*log(183.0*Z13) );
    fXi        = T1*T2;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateR(){
    double thr   = fThDeg*deg_to_rad;
    double SIN   = sin(thr/2.0);
@@ -192,7 +192,7 @@ void RadiativeCorrections::CalculateR(){
    double denom = fMT - 2.0*fEp*SIN2;
    fR           = num/denom;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::CalculateCFACT(){
    // General terms 
    double Q2     = Kinematics::GetQ2(fEs,fEp,fThDeg);
@@ -213,7 +213,7 @@ void RadiativeCorrections::CalculateCFACT(){
    // Put it all together 
    fCFACT       = FTilde*T1*T2*T3;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::EsIntegrand(const double EsPrime){
    // general terms
    double Q2       = Kinematics::GetQ2(EsPrime,fEp,fThDeg);
@@ -246,7 +246,7 @@ double RadiativeCorrections::EsIntegrand(const double EsPrime){
 
    return FES;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::EpIntegrand(const double EpPrime){
    // general terms 
    double Q2       = Kinematics::GetQ2(fEs,EpPrime,fThDeg);
@@ -279,7 +279,7 @@ double RadiativeCorrections::EpIntegrand(const double EpPrime){
 
    return FEP;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::CalculateEsIntegral(){
    int depth      = 10;
    double epsilon = 1e-10;
@@ -288,7 +288,7 @@ double RadiativeCorrections::CalculateEsIntegral(){
    double AnsEs   = Integrate(&RadiativeCorrections::EsIntegrand,min,max,epsilon,depth);
    return AnsEs;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::CalculateEpIntegral(){
    int depth      = 10;
    double epsilon = 1e-10;
@@ -297,7 +297,7 @@ double RadiativeCorrections::CalculateEpIntegral(){
    double AnsEp   = Integrate(&RadiativeCorrections::EpIntegrand,min,max,epsilon,depth);
    return AnsEp;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_exact(){
    // Elastic radiative tail using the exact formalism 
    // Phys. Rev. D 12, 1884 (A62)
@@ -316,7 +316,7 @@ double RadiativeCorrections::ElasticTail_exact(){
    double el_tail  = fsoft*(sigma_ex*Rt + sigma_b); 
    return el_tail; 
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_peakApprox(){
    // Elastic radiative tail, peaking approximation 
    // Phys. Rev. D 12, 1884 (A63) 
@@ -335,7 +335,7 @@ double RadiativeCorrections::ElasticTail_peakApprox(){
  
    return el_tail; 
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaEx(){
    // Elastic radiative tail using the exact formalism 
    // Phys. Rev. D 12, (A24)
@@ -351,7 +351,7 @@ double RadiativeCorrections::ElasticTail_sigmaEx(){
    if(sf_den!=0) sf = sf_num/sf_den; 
    return sf*Ans;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk){
    // Elastic radiative tail using the exact formalism 
    // Phys. Rev. D 12, (A24--41)
@@ -452,7 +452,7 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    } 
    return val;
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaB(){
    // real bremsstrahlung and ionization loss  
    // looks like the angle-peaking approximation (c.f., sigmaP below) 
@@ -496,7 +496,7 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    double val = T1*T2 + T3; 
    return val;  
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaP(){
    // Elastic radiative tail using the angle-peaking approximation
    // Phys. Rev. D. 12, 1884 (A56)  
@@ -530,7 +530,7 @@ double RadiativeCorrections::ElasticTail_sigmaP(){
    double val = T1*T2 + T3; 
    return val;  
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::sigma_el_tilde(double Es){
    // Phys. Rev. D. 12, 1884 (A55) 
    double Ep      = Kinematics::GetEp_Elastic(Es,fThDeg,fMT); 
@@ -539,7 +539,7 @@ double RadiativeCorrections::sigma_el_tilde(double Es){
    double sigmaEl = sigma_el(Es);
    return FTilde*sigmaEl;  
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::sigma_el(double Es){
    // elastic cross section
    // Phys.Rev.D 12,1884 (A13)
@@ -572,7 +572,7 @@ double RadiativeCorrections::sigma_el(double Es){
    double xs_el  = T1*T2*T3; 
    return xs_el; 
 }
-//___________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetF_soft(){
    // Multiple-photon correction
    // Phys.Rev.D 12,1884 (A58)
@@ -585,7 +585,7 @@ double RadiativeCorrections::GetF_soft(){
    double Fsoft = pow(ws/fEs,arg1)*pow(wp/(fEp+wp),arg2);
    return Fsoft;  
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetWs(double Es,double Ep,double th){
    double thr    = th*deg_to_rad; 
    double SIN    = sin(thr/2.);
@@ -598,7 +598,7 @@ double RadiativeCorrections::GetWs(double Es,double Ep,double th){
    double ws = T1 - T2; 
    return ws;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetWp(double Es,double Ep,double th){
    double thr    = th*deg_to_rad; 
    double SIN    = sin(thr/2.);
@@ -611,7 +611,7 @@ double RadiativeCorrections::GetWp(double Es,double Ep,double th){
    double wp = T1 - T2; 
    return wp;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetRho(double Es,double th){
    // for elastic radiative corrections
    double Ep     = Kinematics::GetEp_Elastic(Es,th,fMT); 
@@ -620,7 +620,7 @@ double RadiativeCorrections::GetRho(double Es,double th){
    double rho_sq = Q2 + 4.*fMT*fMT + 4.*fMT*omega; 
    return sqrt(rho_sq);  
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetX(double Es,double th){
    // for elastic radiative corrections
    // Note: NOT x Bjorken! 
@@ -633,7 +633,7 @@ double RadiativeCorrections::GetX(double Es,double th){
    double x   = num/den; 
    return x;  
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetEta(double Es,double th){
    // lab system recoil factor
    double thr = th*deg_to_rad; 
@@ -643,101 +643,102 @@ double RadiativeCorrections::GetEta(double Es,double th){
    double eta = T1*T2; 
    return eta; 
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::GetEta_MTS(double Es,double Ep){
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), pg 208  
    return Es/Ep;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Delta_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z0_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
    // Z^(0) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z1_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
    // Z^(1) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z2_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
    // Z^(2) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Delta_MY(){
    // radiative correction to elastic peak
    // from Meister and Yennie 
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z0_MY(){
    // radiative correction to elastic peak
    // from Meister and Yennie 
    // Z^(0) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z1_MY(){
    // radiative correction to elastic peak
    // from Meister and Yennie 
    // Z^(1) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z2_MY(){
    // radiative correction to elastic peak
    // from Meister and Yennie 
    // Z^(2) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Delta_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z0_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(0) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z1_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(1) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_Z2_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(2) term  
    return 0;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_DeltaEl_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 3.37 
    // delta_el term, accounts for nucleon size effects 
    return 0;
 }
-//_____________________________________________________________________________________________
-double RadiativeCorrections::Integrate(double (RadiativeCorrections::*f)(const double),double A,double B,double epsilon,int Depth){
+//______________________________________________________________________________
+double RadiativeCorrections::Integrate(double (RadiativeCorrections::*f)(const double),
+      double A,double B,double epsilon,int Depth){
    // Adaptive Simpson's Rule
    double C   = (A + B)/2.0;
    double H   = B - A;
@@ -748,7 +749,7 @@ double RadiativeCorrections::Integrate(double (RadiativeCorrections::*f)(const d
    double ans = AdaptiveSimpsonAux(f,A,B,epsilon,S,fa,fb,fc,Depth);
    return ans;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 double RadiativeCorrections::AdaptiveSimpsonAux(double (RadiativeCorrections::*f)(const double),
       double A,double B,double epsilon,
       double S,double fa,double fb,double fc,int bottom){
@@ -769,7 +770,7 @@ double RadiativeCorrections::AdaptiveSimpsonAux(double (RadiativeCorrections::*f
       AdaptiveSimpsonAux(f,C,B,epsilon/2.0,Sright,fc,fb,fe,bottom-1);
    return arg;
 }
-//_____________________________________________________________________________________________
+//______________________________________________________________________________
 void RadiativeCorrections::Print(){
    std::cout << "------------------------------------"              << std::endl;
    std::cout << "Radiative correction quantities: "                 << std::endl;
