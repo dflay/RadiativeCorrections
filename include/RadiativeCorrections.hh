@@ -117,10 +117,10 @@ class RadiativeCorrections {
       double ElasticPeak_Z2_MY();  
       
       // Maximon and Tjon  
-      double ElasticPeak_Delta_MTJ();  
-      double ElasticPeak_Z0_MTJ();  
-      double ElasticPeak_Z1_MTJ();  
-      double ElasticPeak_Z2_MTJ();  
+      double ElasticPeak_Delta_MTJ_E1THDE(double Es,double th,double deltaE);  
+      double ElasticPeak_Z0_MTJ(double Es,double th,double deltaE);  
+      double ElasticPeak_Z1_MTJ(double Es,double th,double deltaE);  
+      double ElasticPeak_Z2_MTJ(double Es,double th,double deltaE);  
       double ElasticPeak_DeltaEl_MTJ();  
 
 }; 

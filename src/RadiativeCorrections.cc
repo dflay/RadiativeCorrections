@@ -638,9 +638,7 @@ double RadiativeCorrections::GetEta(double Es,double th){
    // lab system recoil factor
    double thr = th*deg_to_rad; 
    double COS = cos(thr); 
-   double T1  = Es/fMT; 
-   double T2  = 1.-COS; 
-   double eta = T1*T2; 
+   double eta = 1. + (Es/fMT)*(1.-COS); 
    return eta; 
 }
 //______________________________________________________________________________
@@ -703,31 +701,110 @@ double RadiativeCorrections::ElasticPeak_Z2_MY(){
    return 0;
 }
 //______________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Delta_MTJ(){
+double RadiativeCorrections::ElasticPeak_Delta_MTJ_E1THDE(double Es,double th,double deltaE){
    // radiative correction to elastic peak
-   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
-   return 0;
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2
+   // inputs: 
+   // - Es     = incident electron energy 
+   // - th     = scattered electron angle
+   // - deltaE = electron detector acceptance in lab frame 
+   double T_z0  = ElasticPeak_Z0_MTJ(Es,th,deltaE);  
+   double T_z1  = ElasticPeak_Z1_MTJ(Es,th,deltaE);  
+   double T_z2  = ElasticPeak_Z2_MTJ(Es,th,deltaE);  
+   double T_del = ElasticPeak_DeltaEl_MTJ(Es,th,deltaE); 
+   double res   = T_z0 + fZ*T_z1 + (fZ*fZ)*T_z2 + T_del; 
+   return res;
 }
 //______________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z0_MTJ(){
+double RadiativeCorrections::ElasticPeak_Z0_MTJ(double Es,double th,double deltaE){
    // radiative correction to elastic peak
-   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
+   // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2
    // Z^(0) term  
-   return 0;
+   // inputs: 
+   // - Es     = incident electron energy 
+   // - th     = scattered electron angle
+   // - deltaE = electron detector acceptance in lab frame 
+   // general terms
+   double E1     = Es; 
+   double E3     = Kinematics::GetEp_Elastic(E1,th,fMT);
+   double DE     = deltaE;    
+   double thr    = th*deg_to_rad;
+   double COS    = cos(thr/2.); 
+   double COS2   = COS*COS;
+   double SPENCE = GetSpence(COS2);  
+   double eta    = GetEta(E1,th);
+   double Q2     = Kinematics::GetQ2(E1,E3,th);  
+   double m2     = electron_mass*electron_mass; 
+   double M2     = fMT*fMT;
+   // construct Z0 term  
+   double sf   = alpha/PI; 
+   double T1   = (13./6.)*log(Q2/m2) - (28./9.) - (log(Q2/m2) - 1)*log( 4.*E1*E3/pow(2*eta*DE,2.) ) 
+               - 0.5*log(eta)*log(eta) + SPENCE - PI*PI/6.;
+   double res  = sf*T1;
+   return res;
 }
 //______________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z1_MTJ(){
+double RadiativeCorrections::ElasticPeak_Z1_MTJ(double Es,double th,double deltaE){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
-   // Z^(1) term  
-   return 0;
+   // Z^(1) term 
+   // inputs: 
+   // - Es     = incident electron energy 
+   // - th     = scattered electron angle
+   // - deltaE = electron detector acceptance in lab frame 
+   // general terms
+   double E1      = Es; 
+   double E3      = Kinematics::GetEp_Elastic(E1,th,fMT);
+   double DE      = deltaE;    
+   double eta     = GetEta(E1,th);
+   double x       = GetX(E1,th);
+   double arg1    = 1. - eta/x; 
+   double SPENCE1 = GetSpence(arg1);  
+   double arg2    = 1. - 1./(eta*x); 
+   double SPENCE2 = GetSpence(arg2);
+   double Q2      = Kinematics::GetQ2(E1,E3,th);  
+   double m2      = electron_mass*electron_mass; 
+   double M2      = fMT*fMT;
+   // construct Z1 term  
+   double sf      = 2.*alpha/PI;
+   double T1      = (-1.)*log(eta)*log( Q2*x/pow(2.*eta*DE,2.) ) + SPENCE1 - SPENCE2; 
+   double res     = sf*T1;  
+   return res;
 }
 //______________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z2_MTJ(){
+double RadiativeCorrections::ElasticPeak_Z2_MTJ(double Es,double th,double deltaE){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(2) term  
-   return 0;
+   // inputs: 
+   // - Es     = incident electron energy 
+   // - th     = scattered electron angle
+   // - deltaE = electron detector acceptance in lab frame 
+   // general terms
+   double E1      = Es; 
+   double E3      = Kinematics::GetEp_Elastic(E1,th,fMT);
+   double DE      = deltaE;   
+   double Q2      = Kinematics::GetQ2(E1,E3,th);  
+   double M2      = fMT*fMT;
+   double omega   = Q2/(2.*fMT); 
+   double E4      = fMT + omega; 
+   double p4      = sqrt(E4*E4 - M2); 
+   double beta4   = sqrt(1. - M2/(E4*E4)) 
+   double eta     = GetEta(E1,th);
+   double x       = GetX(E1,th);
+   double rho     = GetRho(E1,th); 
+   double arg1    = 1. - 1./(x*x); 
+   double SPENCE1 = GetSpence(arg1);  
+   double arg2    = -1./x; 
+   double SPENCE2 = GetSpence(arg2);
+   // construct Z2 term 
+   double sf     = alpha/PI;
+   double T1     = (E4/p4)*( -0.5*log(x)*log(x) - log(x)*log(rho*rho/M2) + log(x) ); 
+   double T2     = (-1.)*( (E4/p4)*log(x) - 1.)*log( M2/pow(2.*eta*DE,2.) );
+   double T3     = 1.;
+   double T4     = (E4/p4)*( (-1.)*SPENCE1 + 2.*SPENCE2+ PI*PI/6. ); 
+   double res    = sf*(T1+T2+T3+T4);  
+   return res;
 }
 //______________________________________________________________________________
 double RadiativeCorrections::ElasticPeak_DeltaEl_MTJ(){
