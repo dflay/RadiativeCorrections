@@ -66,7 +66,7 @@ class RadiativeCorrections {
       double GetX(double Es,double th); 
       double GetRho(double Es,double th); 
       double GetEta(double Es,double th); 
-      double GetEta_MS(double Es,double th); 
+      double GetEta_MTS(double Es,double th); 
 
       eInclusiveCrossSection *fInclXS;
       ElasticFormFactor *fFormFactor;
@@ -105,10 +105,10 @@ class RadiativeCorrections {
       double ElasticTail_sigmaEx();   
 
       // Mo & Tsai 
-      double ElasticPeak_Delta_MS();  
-      double ElasticPeak_Z0_MS();  
-      double ElasticPeak_Z1_MS();  
-      double ElasticPeak_Z2_MS();  
+      double ElasticPeak_Delta_MTS();  
+      double ElasticPeak_Z0_MTS();  
+      double ElasticPeak_Z1_MTS();  
+      double ElasticPeak_Z2_MTS();  
 
       // Meister and Yennie  
       double ElasticPeak_Delta_MY();  
@@ -117,11 +117,11 @@ class RadiativeCorrections {
       double ElasticPeak_Z2_MY();  
       
       // Maximon and Tjon  
-      double ElasticPeak_Delta_MT();  
-      double ElasticPeak_Z0_MT();  
-      double ElasticPeak_Z1_MT();  
-      double ElasticPeak_Z2_MT();  
-      double ElasticPeak_DeltaEl_MT();  
+      double ElasticPeak_Delta_MTJ();  
+      double ElasticPeak_Z0_MTJ();  
+      double ElasticPeak_Z1_MTJ();  
+      double ElasticPeak_Z2_MTJ();  
+      double ElasticPeak_DeltaEl_MTJ();  
 
 }; 
 

@@ -644,32 +644,32 @@ double RadiativeCorrections::GetEta(double Es,double th){
    return eta; 
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::GetEta_MS(double Es,double Ep){
+double RadiativeCorrections::GetEta_MTS(double Es,double Ep){
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), pg 208  
    return Es/Ep;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Delta_MS(){
+double RadiativeCorrections::ElasticPeak_Delta_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z0_MS(){
+double RadiativeCorrections::ElasticPeak_Z0_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6 
    // Z^(0) term  
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z1_MS(){
+double RadiativeCorrections::ElasticPeak_Z1_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
    // Z^(1) term  
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z2_MS(){
+double RadiativeCorrections::ElasticPeak_Z2_MTS(){
    // radiative correction to elastic peak
    // from Mo & Tsai, Rev Mod Phys 41 205 (1969), eq II.6
    // Z^(2) term  
@@ -703,34 +703,34 @@ double RadiativeCorrections::ElasticPeak_Z2_MY(){
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Delta_MT(){
+double RadiativeCorrections::ElasticPeak_Delta_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z0_MT(){
+double RadiativeCorrections::ElasticPeak_Z0_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(0) term  
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z1_MT(){
+double RadiativeCorrections::ElasticPeak_Z1_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(1) term  
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_Z2_MT(){
+double RadiativeCorrections::ElasticPeak_Z2_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 5.2 
    // Z^(2) term  
    return 0;
 }
 //_____________________________________________________________________________________________
-double RadiativeCorrections::ElasticPeak_DeltaEl_MT(){
+double RadiativeCorrections::ElasticPeak_DeltaEl_MTJ(){
    // radiative correction to elastic peak
    // from Maximon and Tjon, Phys. Rev. C 62, 054320 (2000), eq 3.37 
    // delta_el term
