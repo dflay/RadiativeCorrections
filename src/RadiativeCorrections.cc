@@ -82,10 +82,15 @@ double RadiativeCorrections::GetTr(double Q2){
    double T2 = log(Q2/M2) - 1.0;
    // Put it all together 
    double Tr = T1*T2;
+   if(fVerbosity>0){
+      std::cout << "[RadiativeCorrections::GetTr]: Q2 = " 
+	        << Q2 << ", b = " << fb << ", T1 = " << T1 << ", T2 = " << T2 << std::endl;
+   }
    return Tr;
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetFTilde(double q2){
+   // Phys. Rev. D 12, 1884 (1975), eq A44 
    // NOTE: q2 != Q2 here! Q2 depends on fEs, fEp, fThDeg.  q2 is computed as needed.  
    // General terms
    double M2     = electron_mass*electron_mass;
@@ -508,6 +513,11 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    double T3    = T3_sf*(T3a + T3b);  
    // put it together 
    double val = T1*T2 + T3; 
+   if(fVerbosity>0){
+      std::cout << "[RadiativeCorrections::ElasticTail_sigmaB]: Es = " 
+                << fEs << ", Ep = " << fEp 
+                << ", T1 = " << T1 << ", T2 = " << T2 << " , T3 = " << T3 << std::endl;
+   } 
    return val;  
 }
 //______________________________________________________________________________
@@ -541,17 +551,27 @@ double RadiativeCorrections::ElasticTail_sigmaP(){
    double T3=0; 
    if(T3_den!=0) T3 = T3_sf*T3_num/T3_den;
    // put it together 
-   double val = T1*T2 + T3; 
+   double val = T1*T2 + T3;
+   if(fVerbosity>0){
+      std::cout << "[RadiativeCorrections::ElasticTail_sigmaP]: Es = " 
+                << fEs << ", Ep = " << fEp << ", Q2 = " << Q2 << ", ws = " << ws << ", wp = " << wp << ", Tr = " << Tr
+                << ", T1 = " << T1 << ", T2 = " << T2 << " , T3 = " << T3 << std::endl;
+   } 
    return val;  
 }
 //______________________________________________________________________________
 double RadiativeCorrections::sigma_el_tilde(double Es){
    // Phys. Rev. D. 12, 1884 (A55) 
-   double Ep      = Kinematics::GetEp_Elastic(Es,fThDeg,fMT); 
-   double Q2      = Kinematics::GetQ2(Es,Ep,fThDeg);
-   double FTilde  = GetFTilde(Q2); 
-   double sigmaEl = sigma_el(Es);
-   return FTilde*sigmaEl;  
+   double Ep        = Kinematics::GetEp_Elastic(Es,fThDeg,fMT); 
+   double Q2        = Kinematics::GetQ2(Es,Ep,fThDeg);
+   double FTilde    = GetFTilde(Q2); 
+   double sigmaEl   = sigma_el(Es);
+   double sig_tilde = FTilde*sigmaEl;
+   if(fVerbosity>0){
+      std::cout << "RadiativeCorrections::sigma_el_tilde]: Es = " 
+                << Es << ", Ep = " << Ep << ", F_tilde = " << FTilde << ", sig_el = " << sigmaEl << std::endl; 
+   }
+   return sig_tilde;  
 }
 //______________________________________________________________________________
 double RadiativeCorrections::sigma_el(double Es){

@@ -57,7 +57,6 @@ class RadiativeCorrections {
       double AdaptiveSimpsonAux(double (RadiativeCorrections::*)(const double),double,double,double,double,double,double,double,int);
 
       // elastic tail 
-      double GetF_soft(); 
       double GetWs(double,double,double); 
       double GetWp(double,double,double);
       double sigma_el(double Es); 
@@ -99,6 +98,7 @@ class RadiativeCorrections {
       void SetTargetVariables(double Z,double A)       { fZ = Z; fA = A; fMT = A*proton_mass; }  
       void SetKinematicVariables(double Es,double Ep,double th); 
       void CalculateVariables();  // compute various variables when Es, Ep, th change
+      double GetF_soft(); 
     
       // for testing.  will be private once things are finalized 
       double ElasticTail_sigmaP();    
