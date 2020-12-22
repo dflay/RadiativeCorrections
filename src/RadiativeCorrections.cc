@@ -9,23 +9,24 @@ RadiativeCorrections::~RadiativeCorrections(){
 }
 //______________________________________________________________________________
 void RadiativeCorrections::Init(){
-   fDeltaE   = 0.01;           // in GeV
-   fMT       = 0;
-   fZ        = 0;
-   fA        = 0;
-   fb        = 0;
-   fXi       = 0;
-   fEta      = 0;
-   fTa       = 0;
-   fTb       = 0;
-   fT        = 0;
-   fThDeg    = 0;
-   fEs       = 0;
-   fEp       = 0;
-   fR        = 0;
-   fCFACT    = 0;
-   fMT       = 0;
-   fThreshold = RC::kPion; 
+   fDeltaE    = 0.01;           // in GeV
+   fMT        = 0;
+   fZ         = 0;
+   fA         = 0;
+   fb         = 0;
+   fXi        = 0;
+   fEta       = 0;
+   fTa        = 0;
+   fTb        = 0;
+   fT         = 0;
+   fThDeg     = 0;
+   fEs        = 0;
+   fEp        = 0;
+   fR         = 0;
+   fCFACT     = 0;
+   fMT        = 0;
+   fThreshold = RC::kPion;
+   fUnit      = RC::kMicrobarnPerGeVPerSr; // mub/GeV/sr  
 }
 //______________________________________________________________________________
 void RadiativeCorrections::SetKinematicVariables(double Es,double Ep,double thDeg){
@@ -313,7 +314,13 @@ double RadiativeCorrections::ElasticTail_exact(){
 	        << "sigma_b = "  << sigma_b  << " " 
 	        << "F_soft = "   << fsoft << std::endl;
    }
-   double el_tail  = fsoft*(sigma_ex*Rt + sigma_b); 
+
+   double units = 1; 
+   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = MUB_PER_GEV_SR;
+   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = NB_PER_GEV_SR;
+   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = PB_PER_GEV_SR;
+
+   double el_tail  = units*fsoft*(sigma_ex*Rt + sigma_b); 
    return el_tail; 
 }
 //______________________________________________________________________________
@@ -324,7 +331,14 @@ double RadiativeCorrections::ElasticTail_peakApprox(){
    double sigma_p = ElasticTail_sigmaP(); 
    double sigma_b = ElasticTail_sigmaB();
    double fsoft   = GetF_soft();  
-   double el_tail = fsoft*(sigma_p + sigma_b);
+
+   double units = 1; 
+   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = MUB_PER_GEV_SR;
+   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = NB_PER_GEV_SR;
+   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = PB_PER_GEV_SR;
+
+   double el_tail = units*fsoft*(sigma_p + sigma_b);
+
    if(fVerbosity>0){
       std::cout << "[RadiativeCorrections::ElasticTail_peakApprox]: " << std::endl;
       std::cout << "Es = " << fEs << ", Ep = " << fEp << ", th = " << fThDeg << std::endl;

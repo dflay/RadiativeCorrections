@@ -15,7 +15,8 @@
 #include "ElasticFormFactor.hh"
 
 namespace RC {
-   enum thrType_t { kElastic, kPion }; 
+   enum thrType_t  { kElastic, kPion }; 
+   enum unitType_t { kMicrobarnPerGeVPerSr, kNanobarnPerGeVPerSr, kPicobarnPerGeVPerSr }; 
 } 
 
 class RadiativeCorrections {
@@ -23,7 +24,8 @@ class RadiativeCorrections {
    private:
       int fVerbosity; 
 
-      RC::thrType_t fThreshold;  // integration threshold: elastic or pion 
+      RC::thrType_t fThreshold;  // integration threshold: elastic or pion
+      RC::unitType_t fUnit;  
 
       double fZ,fA;
       double fDeltaE;
@@ -77,15 +79,10 @@ class RadiativeCorrections {
 
       void Init();
       void Print();
-     
-      // use these for testing only 
-      void SetTargetVariables(double Z,double A)       { fZ = Z; fA = A; fMT = A*proton_mass; }  
-      void SetKinematicVariables(double Es,double Ep,double th); 
-      void CalculateVariables();  // compute various variables when Es, Ep, th change
 
+      void SetUnits(RC::unitType_t u)                  { fUnit = u; };
       void SetIntegrationThreshold(RC::thrType_t t)    { fThreshold = t; } 
-
-      void SetVerbosity(int v)  { fVerbosity = v; } 
+      void SetVerbosity(int v)                         { fVerbosity = v; } 
 
       void SetTb(double tb) { fTb = tb; }
       void SetTa(double ta) { fTa = ta; }
@@ -95,10 +92,14 @@ class RadiativeCorrections {
       void SetFormFactor(ElasticFormFactor *ff)        { fFormFactor = ff; }
 
       double Radiate();
-
       double ElasticTail_peakApprox();  
       double ElasticTail_exact();  
-
+     
+      // use these for testing only 
+      void SetTargetVariables(double Z,double A)       { fZ = Z; fA = A; fMT = A*proton_mass; }  
+      void SetKinematicVariables(double Es,double Ep,double th); 
+      void CalculateVariables();  // compute various variables when Es, Ep, th change
+    
       // for testing.  will be private once things are finalized 
       double ElasticTail_sigmaP();    
       double ElasticTail_sigmaB();    
