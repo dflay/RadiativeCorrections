@@ -9,31 +9,40 @@ RadiativeCorrections::~RadiativeCorrections(){
 }
 //______________________________________________________________________________
 void RadiativeCorrections::Init(){
-   fDeltaE    = 0.01;           // in GeV
-   fMT        = 0;
-   fZ         = 0;
-   fA         = 0;
-   fb         = 0;
-   fXi        = 0;
-   fEta       = 0;
-   fTa        = 0;
-   fTb        = 0;
-   fT         = 0;
-   fThDeg     = 0;
-   fEs        = 0;
-   fEp        = 0;
-   fR         = 0;
-   fCFACT     = 0;
-   fMT        = 0;
-   fThreshold = RC::kPion;
-   fUnit      = RC::kMicrobarnPerGeVPerSr; // mub/GeV/sr  
+   fDeltaE        = 0.01;           // in GeV
+   fMT            = 0;
+   fZ             = 0;
+   fA             = 0;
+   fb             = 0;
+   fXi            = 0;
+   fEta           = 0;
+   fTa            = 0;
+   fTb            = 0;
+   fT             = 0;
+   fThDeg         = 0;
+   fEs            = 0;
+   fEp            = 0;
+   fR             = 0;
+   fCFACT         = 0;
+   fMT            = 0;
+   fThreshold     = RC::kPion;
+   fUnit          = RC::kMicrobarnPerGeVPerSr; // mub/GeV/sr 
+   fElasticTail   = false;
+   fElasticApprox = false;  
 }
 //______________________________________________________________________________
 void RadiativeCorrections::SetKinematicVariables(double Es,double Ep,double thDeg){
    // set important variables 
+   // do this directly for the elastic tail 
    fEs    = Es; 
    fEp    = Ep; 
-   fThDeg = thDeg; 
+   fThDeg = thDeg;
+   // if we have a XS model, set that too 
+   if(fInclXS!=NULL){
+      fInclXS->SetEs(Es);  
+      fInclXS->SetEp(Ep);  
+      fInclXS->SetTh(thDeg);  
+   }
 }
 //______________________________________________________________________________
 void RadiativeCorrections::CalculateVariables(){
@@ -65,6 +74,16 @@ double RadiativeCorrections::Radiate(){
    double AnsEs  = CalculateEsIntegral();
    double AnsEp  = CalculateEpIntegral();
    double RadXS  = fCFACT*BornXS + AnsEs + AnsEp;
+
+   double el_tail=0;
+   if(fElasticTail){
+      if(fElasticApprox){
+	 el_tail = ElasticTail_peakApprox(); 
+      }else{
+	 el_tail = ElasticTail_exact(); 
+      }
+      RadXS += el_tail;   
+   }
 
    return RadXS;
 }
@@ -357,7 +376,7 @@ double RadiativeCorrections::ElasticTail_peakApprox(){
 //______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaEx(){
    // Elastic radiative tail using the exact formalism 
-   // Phys. Rev. D 12, (A24)
+   // Phys. Rev. D 12, 1884 (A24)
    int depth = 20; 
    double epsilon = 1e-10;
    double min = -1; 
@@ -373,7 +392,7 @@ double RadiativeCorrections::ElasticTail_sigmaEx(){
 //______________________________________________________________________________
 double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk){
    // Elastic radiative tail using the exact formalism 
-   // Phys. Rev. D 12, (A24--41)
+   // Phys. Rev. D 12, 1884 (A24--41)
    // 4-vector definitions
    // s = 4-momentum of incident electron (Es,vec(s))  
    // p = 4-momentum of scattered electron (Ep,vec(p))
@@ -884,6 +903,9 @@ double RadiativeCorrections::AdaptiveSimpsonAux(double (RadiativeCorrections::*f
 //______________________________________________________________________________
 void RadiativeCorrections::Print(){
    std::cout << "------------------------------------"              << std::endl;
+   std::cout << "Settings: " << std::endl;
+   std::cout << "Elastic tail enabled:    " << fElasticTail    << std::endl; 
+   std::cout << "Elastic tail exact form: " << !fElasticApprox << std::endl;    
    std::cout << "Radiative correction quantities: "                 << std::endl;
    std::cout << "DeltaE = " << std::fixed      << std::setprecision(4) << fDeltaE << " [GeV]"  << std::endl;
    std::cout << "Constants for given thicknesses: "                 << std::endl;

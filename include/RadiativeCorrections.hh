@@ -22,7 +22,8 @@ namespace RC {
 class RadiativeCorrections {
 
    private:
-      int fVerbosity; 
+      int fVerbosity;
+      bool fElasticTail,fElasticApprox; 
 
       RC::thrType_t fThreshold;  // integration threshold: elastic or pion
       RC::unitType_t fUnit;  
@@ -61,7 +62,7 @@ class RadiativeCorrections {
       double GetWp(double,double,double);
       double sigma_el(double Es); 
       double sigma_el_tilde(double Es); 
-      double ElasticTail_sigmaEx_Integrand(const double);   
+      // double ElasticTail_sigmaEx_Integrand(const double);   
 
       // elastic peak kinematic factors 
       double GetX(double Es,double th); 
@@ -78,6 +79,9 @@ class RadiativeCorrections {
 
       void Init();
       void Print();
+  
+      void ElasticTailEnable(bool v=true)              { fElasticTail   = v; } 
+      void UseElasticTailApprox(bool v=true)           { fElasticApprox = v; } 
 
       void SetUnits(RC::unitType_t u)                  { fUnit = u; };
       void SetIntegrationThreshold(RC::thrType_t t)    { fThreshold = t; } 
@@ -104,6 +108,7 @@ class RadiativeCorrections {
       double ElasticTail_sigmaP();    
       double ElasticTail_sigmaB();    
       double ElasticTail_sigmaEx();   
+      double ElasticTail_sigmaEx_Integrand(const double);   
 
       // Mo & Tsai 
       double ElasticPeak_Delta_MTS();  

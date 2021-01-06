@@ -93,7 +93,7 @@ double AmrounElasticFF::GetGM(double Q2){
    // q => sqrt(Q2) in fm^-1 
    double q_eV = sqrt(Q2)*1E+9;
    double q_fm = (q_eV/hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1 
-   double GM = SumOfGaussians(1,q_fm);
+   double GM   = SumOfGaussians(1,q_fm);
    return GM; 
 }
 //______________________________________________________________________________
@@ -111,6 +111,9 @@ double AmrounElasticFF::SumOfGaussians(int type,double q){
       a = FF/( 1. + 2.*rg*rg ); 
       b = cos(qr) + 2.*rg*rg*(sin(qr)/qr);  
       sum += a*b; 
-   } 
+   }
+   // ensure it's positive
+   double res_sq = pow(T1*sum,2.); 
+   double res    = sqrt(res_sq);  
    return T1*sum; 
 }
