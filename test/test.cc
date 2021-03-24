@@ -6,6 +6,7 @@
 
 #include "ElasticFormFactor.hh"
 #include "DipoleElasticFF.hh"
+// #include "SteinElasticFF.hh"
 #include "RadiativeCorrections.hh"
 
 #include "CSVManager.hh"
@@ -45,6 +46,7 @@ int main(){
 
    RadiativeCorrections *myRC = new RadiativeCorrections();
    myRC->SetFormFactor(myDip);
+   myRC->SetCrossSection(myXS); 
    myRC->SetTargetVariables(Z,A);
    // myRC->SetRadiationLengths(tb,ta);
    // myRC->SetVerbosity(1);  

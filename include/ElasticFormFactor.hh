@@ -15,10 +15,15 @@
 class ElasticFormFactor {
 
    protected:
+      int fType;     // target type 
+      double fA,fZ;  // target A and Z 
+      double fMT;    // target mass
 
    public:
       ElasticFormFactor()  {};
       ~ElasticFormFactor() {};
+
+      void SetTarget(int type); 
 
       virtual double GetGE(double Q2)=0;
       virtual double GetGM(double Q2)=0;
