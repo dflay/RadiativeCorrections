@@ -55,7 +55,7 @@ namespace RC {
       // cross section (in cm^2)  
       const double megabarn	= 1E-18;   
       const double kilobarn	= 1E-21; 
-      const double barn	= 1E-24; 
+      const double barn	        = 1E-24; 
       const double millibarn	= 1E-27; 
       const double microbarn	= 1E-30; 
       const double nanobarn	= 1E-33; 
