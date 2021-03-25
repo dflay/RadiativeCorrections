@@ -83,7 +83,7 @@ double AmrounElasticFF::GetGE(double Q2){
    // Q2 assumed in GeV^2 
    // q => sqrt(Q2) in fm^-1 
    double q_eV = sqrt(Q2)*1E+9;
-   double q_fm = (q_eV/hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1 
+   double q_fm = (q_eV/RC::Constants::hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1 
    double GE   = SumOfGaussians(0,q_fm);
    return GE; 
 }
@@ -92,7 +92,7 @@ double AmrounElasticFF::GetGM(double Q2){
    // Q2 assumed in GeV^2 
    // q => sqrt(Q2) in fm^-1 
    double q_eV = sqrt(Q2)*1E+9;
-   double q_fm = (q_eV/hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1 
+   double q_fm = (q_eV/RC::Constants::hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1 
    double GM   = SumOfGaussians(1,q_fm);
    return GM; 
 }

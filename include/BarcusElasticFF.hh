@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "constants.hh"
+#include "RCConstants.hh"
 #include "ElasticFormFactor.hh"
 
 #define SB_SIZE 12 

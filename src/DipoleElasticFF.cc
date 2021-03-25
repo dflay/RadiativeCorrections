@@ -29,6 +29,6 @@ double DipoleElasticFF::GetGE(double Q2){
 //______________________________________________________________________________
 double DipoleElasticFF::GetGM(double Q2){
    double GE = GetGE(Q2); 
-   double GM = (1. + kappa_p)*GE;
+   double GM = (1. + RC::Constants::kappa_p)*GE;
    return GM; 
 }

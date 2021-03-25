@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "constants.hh"
+#include "RCConstants.hh"
 #include "ElasticFormFactor.hh"
 
 class GMp12ElasticFF: public ElasticFormFactor { 

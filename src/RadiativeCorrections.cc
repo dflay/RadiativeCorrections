@@ -61,7 +61,7 @@ double RadiativeCorrections::Radiate(){
    fEs    = fInclXS->GetEs();
    fEp    = fInclXS->GetEp();
    fThDeg = fInclXS->GetTh();
-   fMT    = fA*proton_mass;      // set the target mass 
+   fMT    = fA*RC::Constants::proton_mass;      // set the target mass 
    fT     = fTa + fTb;
 
    if( (fTa==0)||(fTb==0) ){
@@ -95,9 +95,10 @@ double RadiativeCorrections::GetPhi(double v){
 //______________________________________________________________________________
 double RadiativeCorrections::GetTr(double Q2){
    // General terms
-   double M2 = electron_mass*electron_mass;
+   double me = RC::Constants::electron_mass;
+   double M2 = me*me;
    // Individual terms
-   double T1 = (1.0/fb)*(alpha/PI);
+   double T1 = (1.0/fb)*(RC::Constants::alpha/RC::Constants::PI);
    double T2 = log(Q2/M2) - 1.0;
    // Put it all together 
    double Tr = T1*T2;
@@ -112,9 +113,11 @@ double RadiativeCorrections::GetFTilde(double q2){
    // Phys. Rev. D 12, 1884 (1975), eq A44 
    // NOTE: q2 != Q2 here! Q2 depends on fEs, fEp, fThDeg.  q2 is computed as needed.  
    // General terms
-   double M2     = electron_mass*electron_mass;
+   double alpha  = RC::Constants::alpha; 
+   double M2     = RC::Constants::electron_mass*RC::Constants::electron_mass;
+   double PI     = RC::Constants::PI; 
    double PI2    = PI*PI;
-   double thr    = fThDeg*deg_to_rad;
+   double thr    = fThDeg*RC::Constants::deg_to_rad;
    double COS    = cos(thr/2.0);
    double COS2   = COS*COS;
    double SPENCE = GetSpence(COS2);
@@ -129,9 +132,11 @@ double RadiativeCorrections::GetFTilde(double q2){
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetEsMin(double Ep){
-   double thr   = fThDeg*deg_to_rad;
+   double thr   = fThDeg*RC::Constants::deg_to_rad;
    double SIN   = sin(thr/2.0);
    double SIN2  = SIN*SIN;
+   double Mp    = RC::Constants::proton_mass;
+   double Mpi   = RC::Constants::pion_mass;
 
    double num=0,denom=0;
    if(fThreshold==RC::kElastic){
@@ -139,8 +144,8 @@ double RadiativeCorrections::GetEsMin(double Ep){
       denom = 1.0 - (2.0*Ep/fMT)*SIN2; 
    }else if(fThreshold==RC::kPion){
       // this EXCLUDES the QE tail  
-      num   = pion_mass*pion_mass + 2.*proton_mass*pion_mass + 2.*proton_mass*Ep;
-      denom = 2.*proton_mass - (4.0*Ep)*SIN2;
+      num   = Mpi*Mpi + 2.*Mp*Mpi + 2.*Mp*Ep;
+      denom = 2.*Mp - (4.0*Ep)*SIN2;
    }
 
    double EsMin = num/denom;
@@ -148,9 +153,11 @@ double RadiativeCorrections::GetEsMin(double Ep){
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetEpMax(double Es){
-   double thr   = fThDeg*deg_to_rad;
+   double thr   = fThDeg*RC::Constants::deg_to_rad;
    double SIN   = sin(thr/2.0);
    double SIN2  = SIN*SIN;
+   double Mp    = RC::Constants::proton_mass;
+   double Mpi   = RC::Constants::pion_mass;
 
    double num=0,denom=0;
    if(fThreshold==RC::kElastic){
@@ -158,8 +165,8 @@ double RadiativeCorrections::GetEpMax(double Es){
       denom = 1.0 + (2.0*Es/fMT)*SIN2; 
    }else if(fThreshold==RC::kPion){
       // this EXCLUDES the QE tail  
-      num   = 2.*proton_mass*Es - 2.*proton_mass*pion_mass - pion_mass*pion_mass;
-      denom = 2.*proton_mass + (4.0*Es)*SIN2;
+      num   = 2.*Mp*Es - 2.*Mp*Mpi - Mpi*Mpi;
+      denom = 2.*Mp + (4.0*Es)*SIN2;
    }
 
    double EpMax = num/denom;
@@ -169,6 +176,7 @@ double RadiativeCorrections::GetEpMax(double Es){
 double RadiativeCorrections::GetSpence(double x){
    // converted from radcor.f: 
    double num=0,denom=0,Index=0;
+   double PI  = RC::Constants::PI; 
    double PI2 = PI*PI;
    double ans = (PI2/6.0) - log(x)*log(1.-x);
 
@@ -204,13 +212,13 @@ void RadiativeCorrections::CalculateB(){
 //______________________________________________________________________________
 void RadiativeCorrections::CalculateXi(){
    double Z13 = pow(fZ,-1.0/3.0);
-   double T1  = PI*electron_mass/(2.0*alpha);
+   double T1  = RC::Constants::PI*RC::Constants::electron_mass/(2.0*RC::Constants::alpha);
    double T2  = fT/( (fZ+fEta)*log(183.0*Z13) );
    fXi        = T1*T2;
 }
 //______________________________________________________________________________
 void RadiativeCorrections::CalculateR(){
-   double thr   = fThDeg*deg_to_rad;
+   double thr   = fThDeg*RC::Constants::deg_to_rad;
    double SIN   = sin(thr/2.0);
    double SIN2  = SIN*SIN;
    double num   = fMT + 2.0*fEs*SIN2;
@@ -340,9 +348,9 @@ double RadiativeCorrections::ElasticTail_exact(){
    }
 
    double units = 1; 
-   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = MUB_PER_GEV_SR;
-   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = NB_PER_GEV_SR;
-   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = PB_PER_GEV_SR;
+   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = RC::Constants::MUB_PER_GEV_SR;
+   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = RC::Constants::NB_PER_GEV_SR;
+   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = RC::Constants::PB_PER_GEV_SR;
 
    double el_tail  = units*fsoft*(sigma_ex*Rt + sigma_b); 
    return el_tail; 
@@ -357,9 +365,9 @@ double RadiativeCorrections::ElasticTail_peakApprox(){
    double fsoft   = GetF_soft();  
 
    double units = 1; 
-   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = MUB_PER_GEV_SR;
-   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = NB_PER_GEV_SR;
-   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = PB_PER_GEV_SR;
+   if(fUnit==RC::kMicrobarnPerGeVPerSr) units = RC::Constants::MUB_PER_GEV_SR;
+   if(fUnit==RC::kNanobarnPerGeVPerSr ) units = RC::Constants::NB_PER_GEV_SR;
+   if(fUnit==RC::kPicobarnPerGeVPerSr ) units = RC::Constants::PB_PER_GEV_SR;
 
    double el_tail = units*fsoft*(sigma_p + sigma_b);
 
@@ -384,8 +392,8 @@ double RadiativeCorrections::ElasticTail_sigmaEx(){
    double Ans = Integrate(&RadiativeCorrections::ElasticTail_sigmaEx_Integrand,min,max,epsilon,depth);
    // scale factor 
    double sf=0;
-   double sf_num = pow(alpha,3)*fEp; 
-   double sf_den = 2.*PI*fEs;
+   double sf_num = pow(RC::Constants::alpha,3)*fEp; 
+   double sf_den = 2.*RC::Constants::PI*fEs;
    if(sf_den!=0) sf = sf_num/sf_den; 
    return sf*Ans;
 }
@@ -399,15 +407,16 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    // t = 4-momentum of target (MT,0) 
    // k = 4-momentum of real photon emitted (w,vec(k))  
    // u = s + t - p 
+   double me      = RC::Constants::electron_mass; 
    // scattering angle theta
-   double thr     = fThDeg*deg_to_rad; 
+   double thr     = fThDeg*RC::Constants::deg_to_rad; 
    double COS     = cos(thr);
    // vector calcs  
-   double s_mag   = sqrt(fEs*fEs - electron_mass*electron_mass); // FIXME: is this right?  
-   double p_mag   = sqrt(fEp*fEp - electron_mass*electron_mass); // FIXME: is this right?  
+   double s_mag   = sqrt(fEs*fEs - me*me); // FIXME: is this right?  
+   double p_mag   = sqrt(fEp*fEp - me*me); // FIXME: is this right?  
    double s_dot_p = fEs*fEp - p_mag*s_mag*COS;
    double u_0     = fEs + fMT - fEp;
-   double u_sq    = 2.*electron_mass*electron_mass + fMT*fMT - 2.*s_dot_p + 2.*fMT*(fEs-fEp); 
+   double u_sq    = 2.*me*me + fMT*fMT - 2.*s_dot_p + 2.*fMT*(fEs-fEp); 
    double u_mag   = sqrt(u_0*u_0-u_sq);  
    // theta_k (angle between u and k)  
    double sin_thk = sqrt(1. - cos_thk*cos_thk);  
@@ -418,7 +427,7 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    double cos_ths = (s_mag - p_mag*COS)/u_mag;  
    // other variables 
    double w       = 0.5*(u_sq - fMT*fMT)/(u_0  - u_mag*cos_thk);  
-   double q_sq    = 2.*electron_mass*electron_mass - 2.*s_dot_p - 2.*w*(fEs-fEp) + 2.*w*u_mag*cos_thk;
+   double q_sq    = 2.*me*me - 2.*s_dot_p - 2.*w*(fEs-fEp) + 2.*w*u_mag*cos_thk;
    double a       = w*(fEp - p_mag*cos_thp*cos_thk);
    double a_pr    = w*(fEs - s_mag*cos_ths*cos_thk);
    double b_pr    = (-1.)*w*p_mag*sin_thp*sin_thk;
@@ -442,11 +451,11 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    if(T0_den!=0) T0 = T0_num/T0_den;
    // T1 is scaled by W2_tilde 
    double T1a=0;
-   double T1a_num = (-1.)*(a*electron_mass*electron_mass)*(2.*fEs*(fEp + w) + q_sq/2. );  
+   double T1a_num = (-1.)*(a*me*me)*(2.*fEs*(fEp + w) + q_sq/2. );  
    double T1a_den = pow(x,3);
    if(T1a_den!=0) T1a = T1a_num/T1a_den; 
    double T1b=0;
-   double T1b_num = (-1.)*(a_pr*electron_mass*electron_mass)*(2.*fEp*(fEs - w) + q_sq/2. );  
+   double T1b_num = (-1.)*(a_pr*me*me)*(2.*fEp*(fEs - w) + q_sq/2. );  
    double T1b_den = pow(y,3);
    if(T1b_den!=0) T1b = T1b_num/T1b_den;
    double T1c = -2.;
@@ -454,13 +463,13 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    double T1d_sf_num = 2.*v*(y-x);   
    double T1d_sf_den = x*y; 
    if(T1d_sf_den!=0) T1d_sf = T1d_sf_num/T1d_sf_den;
-   double T1d = T1d_sf*(electron_mass*electron_mass*(s_dot_p - w*w) + s_dot_p*(2.*fEs*fEp - s_dot_p + w*(fEs-fEp)) ); 
+   double T1d = T1d_sf*(me*me*(s_dot_p - w*w) + s_dot_p*(2.*fEs*fEp - s_dot_p + w*(fEs-fEp)) ); 
    double T1e=0; 
-   double T1e_num = 2.*(fEs*fEp + fEs*w + fEp*fEp) + q_sq/2. - s_dot_p - electron_mass*electron_mass;
+   double T1e_num = 2.*(fEs*fEp + fEs*w + fEp*fEp) + q_sq/2. - s_dot_p - me*me;
    double T1e_den = x; 
    if(T1e_den!=0) T1e = T1e_num/T1e_den; 
    double T1f=0; 
-   double T1f_num = 2.*(fEs*fEp - fEp*w + fEs*fEs) + q_sq/2. - s_dot_p - electron_mass*electron_mass;
+   double T1f_num = 2.*(fEs*fEp - fEp*w + fEs*fEs) + q_sq/2. - s_dot_p - me*me;
    double T1f_den = y; 
    if(T1f_den!=0) T1f = (-1.)*T1f_num/T1f_den; // NOTE the minus sign!  
    double T1 = W2_tilde*(T1a + T1b + T1c + T1d + T1e + T1f);
@@ -469,14 +478,14 @@ double RadiativeCorrections::ElasticTail_sigmaEx_Integrand(const double cos_thk)
    double T2a_sf_num = a*pow(y,3) + a_pr*pow(x,3);
    double T2a_sf_den = pow(x,3)*pow(y,3);
    if(T2a_sf_den!=0) T2a_sf = T2a_sf_num/T2a_sf_den;
-   double T2a = T2a_sf*electron_mass*electron_mass*(2.*electron_mass*electron_mass + q_sq);
+   double T2a = T2a_sf*me*me*(2.*me*me + q_sq);
    double T2b = 4.; 
    double T2c=0;
-   double T2c_num = 4.*v*(y-x)*s_dot_p*(s_dot_p - 2.*electron_mass*electron_mass);  
+   double T2c_num = 4.*v*(y-x)*s_dot_p*(s_dot_p - 2.*me*me);  
    double T2c_den = x*y;  
    if(T2c_den!=0) T2c = T2c_num/T2c_den;  
    double T2d=0;
-   double T2d_num = (y-x)*( 2.*s_dot_p + 2.*electron_mass*electron_mass - q_sq); 
+   double T2d_num = (y-x)*( 2.*s_dot_p + 2.*me*me - q_sq); 
    double T2d_den = x*y; 
    if(T2d_den!=0) T2d = T2d_num/T2d_den;  
    double T2 = W1_tilde*(T2a + T2b + T2c + T2d); 
@@ -495,7 +504,7 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
    // real bremsstrahlung and ionization loss  
    // looks like the angle-peaking approximation (c.f., sigmaP below) 
    // Phys. Rev. D 12, 1884 (A49) 
-   double thr    = fThDeg*deg_to_rad; 
+   double thr    = fThDeg*RC::Constants::deg_to_rad; 
    double SIN    = sin(thr/2.);
    double SIN2   = SIN*SIN;
    double ws     = GetWs(fEs,fEp,fThDeg);  
@@ -543,7 +552,7 @@ double RadiativeCorrections::ElasticTail_sigmaB(){
 double RadiativeCorrections::ElasticTail_sigmaP(){
    // Elastic radiative tail using the angle-peaking approximation
    // Phys. Rev. D. 12, 1884 (A56)  
-   double thr    = fThDeg*deg_to_rad; 
+   double thr    = fThDeg*RC::Constants::deg_to_rad; 
    double SIN    = sin(thr/2.);
    double SIN2   = SIN*SIN;
    double ws     = GetWs(fEs,fEp,fThDeg);  
@@ -596,7 +605,7 @@ double RadiativeCorrections::sigma_el_tilde(double Es){
 double RadiativeCorrections::sigma_el(double Es){
    // elastic cross section
    // Phys.Rev.D 12,1884 (A13)
-   double thr   = fThDeg*deg_to_rad; 
+   double thr   = fThDeg*RC::Constants::deg_to_rad; 
    double COS   = cos(thr/2.); 
    double COS2  = COS*COS; 
    double SIN   = sin(thr/2.); 
@@ -612,6 +621,7 @@ double RadiativeCorrections::sigma_el(double Es){
    double W2    = (GE*GE + tau*GM*GM)/(1+tau);
    // term 1 
    double T1=0;
+   double alpha  = RC::Constants::alpha; 
    double T1_num = alpha*alpha*COS2; 
    double T1_den = 4.*Es*Es*SIN2*SIN2; 
    if(T1_den!=0) T1 = T1_num/T1_den;  
@@ -640,7 +650,7 @@ double RadiativeCorrections::GetF_soft(){
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetWs(double Es,double Ep,double th){
-   double thr    = th*deg_to_rad; 
+   double thr    = th*RC::Constants::deg_to_rad; 
    double SIN    = sin(thr/2.);
    double SIN2   = SIN*SIN; 
    double T1     = Es; 
@@ -653,7 +663,7 @@ double RadiativeCorrections::GetWs(double Es,double Ep,double th){
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetWp(double Es,double Ep,double th){
-   double thr    = th*deg_to_rad; 
+   double thr    = th*RC::Constants::deg_to_rad; 
    double SIN    = sin(thr/2.);
    double SIN2   = SIN*SIN; 
    double T2     = Ep; 
@@ -689,7 +699,7 @@ double RadiativeCorrections::GetX(double Es,double th){
 //______________________________________________________________________________
 double RadiativeCorrections::GetEta(double Es,double th){
    // lab system recoil factor
-   double thr = th*deg_to_rad; 
+   double thr = th*RC::Constants::deg_to_rad; 
    double COS = cos(thr); 
    double eta = 1. + (Es/fMT)*(1.-COS); 
    return eta; 
@@ -781,19 +791,21 @@ double RadiativeCorrections::ElasticPeak_Z0_MTJ(double Es,double th,double delta
    double E1     = Es; 
    double E3     = Kinematics::GetEp_Elastic(E1,th,fMT);
    double DE     = deltaE;    
-   double thr    = th*deg_to_rad;
+   double thr    = th*RC::Constants::deg_to_rad;
    double COS    = cos(thr/2.); 
    double COS2   = COS*COS;
    double SPENCE = GetSpence(COS2);  
    double eta    = GetEta(E1,th);
    double Q2     = Kinematics::GetQ2(E1,E3,th);  
-   double m2     = electron_mass*electron_mass; 
+   double m2     = RC::Constants::electron_mass*RC::Constants::electron_mass; 
    double M2     = fMT*fMT;
-   // construct Z0 term  
-   double sf   = alpha/PI; 
-   double T1   = (13./6.)*log(Q2/m2) - (28./9.) - (log(Q2/m2) - 1)*log( 4.*E1*E3/pow(2*eta*DE,2.) ) 
-               - 0.5*log(eta)*log(eta) + SPENCE - PI*PI/6.;
-   double res  = sf*T1;
+   // construct Z0 term
+   double PI    = RC::Constants::PI;   
+   double alpha = RC::Constants::alpha; 
+   double sf    = alpha/PI; 
+   double T1    = (13./6.)*log(Q2/m2) - (28./9.) - (log(Q2/m2) - 1)*log( 4.*E1*E3/pow(2*eta*DE,2.) ) 
+                - 0.5*log(eta)*log(eta) + SPENCE - PI*PI/6.;
+   double res   = sf*T1;
    return res;
 }
 //______________________________________________________________________________
@@ -816,9 +828,11 @@ double RadiativeCorrections::ElasticPeak_Z1_MTJ(double Es,double th,double delta
    double arg2    = 1. - 1./(eta*x); 
    double SPENCE2 = GetSpence(arg2);
    double Q2      = Kinematics::GetQ2(E1,E3,th);  
-   double m2      = electron_mass*electron_mass; 
+   double m2      = RC::Constants::electron_mass*RC::Constants::electron_mass; 
    double M2      = fMT*fMT;
    // construct Z1 term  
+   double PI      = RC::Constants::PI;    
+   double alpha   = RC::Constants::alpha;  
    double sf      = 2.*alpha/PI;
    double T1      = (-1.)*log(eta)*log( Q2*x/pow(2.*eta*DE,2.) ) + SPENCE1 - SPENCE2; 
    double res     = sf*T1;  
@@ -851,6 +865,8 @@ double RadiativeCorrections::ElasticPeak_Z2_MTJ(double Es,double th,double delta
    double arg2    = -1./x; 
    double SPENCE2 = GetSpence(arg2);
    // construct Z2 term 
+   double PI     = RC::Constants::PI;     
+   double alpha  = RC::Constants::alpha;     
    double sf     = alpha/PI;
    double T1     = (E4/p4)*( -0.5*log(x)*log(x) - log(x)*log(rho*rho/M2) + log(x) ); 
    double T2     = (-1.)*( (E4/p4)*log(x) - 1.)*log( M2/pow(2.*eta*DE,2.) );

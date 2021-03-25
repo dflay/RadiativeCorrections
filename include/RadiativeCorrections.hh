@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <cmath>
 
-#include "constants.hh"
+#include "RCConstants.hh"
 #include "Kinematics.hh"
 #include "eInclusiveCrossSection.hh" 
 #include "ElasticFormFactor.hh"
@@ -99,7 +99,7 @@ class RadiativeCorrections {
       double ElasticTail_exact();  
      
       // use these for testing only 
-      void SetTargetVariables(double Z,double A)       { fZ = Z; fA = A; fMT = A*proton_mass; }  
+      void SetTargetVariables(double Z,double A)       { fZ = Z; fA = A; fMT = A*RC::Constants::proton_mass; }  
       void SetKinematicVariables(double Es,double Ep,double th); 
       void CalculateVariables();  // compute various variables when Es, Ep, th change
       double GetF_soft(); 

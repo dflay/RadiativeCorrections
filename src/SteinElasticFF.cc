@@ -13,7 +13,7 @@ double SteinElasticFF::GetGE(double Q2){
    double tau   = Q2/(4.*fMT*fMT);        // unitless  
    // q => sqrt(Q2) in fm^-1 
    double q_eV  = sqrt(Q2)*1E+9;
-   double q_fm  = (q_eV/hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1
+   double q_fm  = (q_eV/RC::Constants::hc_meter)*1E-15;  // [eV][1/(eV*m)][10^-15 m]/[fm] = fm^-1
    double q2_fm = pow(q_fm,2.); 
    double b     = 2.4;                       // [fm] 
    double c     = 1.07*pow(fA,1./3.);        // [fm]

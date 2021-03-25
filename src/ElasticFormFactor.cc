@@ -21,5 +21,5 @@ void ElasticFormFactor::SetTarget(int type){
       fA = 196.966569;
       fZ = 79;  
    }
-   fMT = proton_mass*fA;
+   fMT = RC::Constants::proton_mass*fA;
 }

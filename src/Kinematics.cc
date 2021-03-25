@@ -7,7 +7,7 @@ namespace Kinematics {
       // Es = incident electron energy 
       // th = e- scattering angle in deg 
       // M  = mass of target  
-      double thr   = th*deg_to_rad;
+      double thr   = th*RC::Constants::deg_to_rad;
       double SIN   = sin(thr/2.);
       double SIN2  = SIN*SIN;
       double Ep    = Es/(1 + (2.*Es/M)*SIN2);
@@ -15,7 +15,7 @@ namespace Kinematics {
    }
    //________________________________________________________________________
    double GetQ2(double Es,double Ep,double th){
-      double thr  = th*deg_to_rad;
+      double thr  = th*RC::Constants::deg_to_rad;
       double SIN  = sin(thr/2.);
       double SIN2 = SIN*SIN;
       double Q2   = 4.*Es*Ep*SIN2;
@@ -46,7 +46,7 @@ namespace Kinematics {
    double GetEpsilon(double Es,double Ep,double th){
       double Nu    = Es-Ep; 
       double Q2    = GetQ2(Es,Ep,th); 
-      double thr   = th*deg_to_rad;
+      double thr   = th*RC::Constants::deg_to_rad;
       double TAN   = tan(thr/2.0);
       double TAN2  = TAN*TAN;
       double num   = 1.0;

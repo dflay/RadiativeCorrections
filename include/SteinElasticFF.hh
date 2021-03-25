@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "constants.hh"
+#include "RCConstants.hh"
 #include "ElasticFormFactor.hh"
 
 class SteinElasticFF: public ElasticFormFactor { 

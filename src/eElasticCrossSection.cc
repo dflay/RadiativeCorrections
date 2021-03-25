@@ -12,8 +12,8 @@ eElasticCrossSection::~eElasticCrossSection(){
 double eElasticCrossSection::GetBornXS(){
    // Es = incident electron energy
    // th = scattered electron angle
-   double MT    = fA*proton_mass; 
-   double thr   = fTh*deg_to_rad;
+   double MT    = fA*RC::Constants::proton_mass; 
+   double thr   = fTh*RC::Constants::deg_to_rad;
    double TAN   = tan(thr/2.); 
    double TAN2  = TAN*TAN;
    // kinematics and form factors 

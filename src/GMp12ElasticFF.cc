@@ -11,7 +11,7 @@ GMp12ElasticFF::~GMp12ElasticFF(){
 double GMp12ElasticFF::GetGE(double Q2){
    double GE=0;
 
-   double tau = Q2/(4.*proton_mass*proton_mass); 
+   double tau = Q2/(4.*RC::Constants::proton_mass*RC::Constants::proton_mass); 
 
    const int NA  = 1; 
    double a[NA]  = {-0.21}; 
@@ -32,7 +32,7 @@ double GMp12ElasticFF::GetGE(double Q2){
 double GMp12ElasticFF::GetGM(double Q2){
    double GM=0;
 
-   double tau = Q2/(4.*proton_mass*proton_mass); 
+   double tau = Q2/(4.*RC::Constants::proton_mass*RC::Constants::proton_mass); 
 
    const int NA  = 1; 
    double a[NA]  = {0.048}; 
@@ -46,6 +46,6 @@ double GMp12ElasticFF::GetGM(double Q2){
    double den = 1; 
    for(int i=0;i<NB;i++) den += b[i]*pow(tau,i+1);
 
-   if(den!=0) GM = mu_p*num/den;
+   if(den!=0) GM = RC::Constants::mu_p*num/den;
    return GM; 
 }
