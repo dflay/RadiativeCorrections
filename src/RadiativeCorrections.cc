@@ -25,6 +25,8 @@ void RadiativeCorrections::Init(){
    fR             = 0;
    fCFACT         = 0;
    fMT            = 0;
+   fNumIter       = 4;                         // number of iterations for unfolding born xs 
+   fIterThresh    = 1E-3;                      // tolerance threshold for unfolding born xs  
    fThreshold     = RC::kPion;
    fUnit          = RC::kMicrobarnPerGeVPerSr; // mub/GeV/sr 
    fElasticTail   = false;
@@ -86,6 +88,73 @@ double RadiativeCorrections::Radiate(){
    }
 
    return RadXS;
+}
+//______________________________________________________________________________
+int RadiativeCorrections::Unfold(double Es,double th,std::vector<double> Ep,std::vector<double> xsr,std::vector<double> &xsb){
+   // unfold the BORN cross section from an input spectrum of RADIATED cross section data 
+   // input: experimental/radiated cross section specrum
+   // - Es  = beam energy [GeV]
+   // - th  = scattered e- angle [deg]  
+   // - Ep  = vector of scattered e- energies [GeV]
+   // - xsr = vector of experimental/radiated cross sections [user-defined units; e.g., mub/GeV/sr, nb/GeV/sr] 
+   // output: BORN cross section  
+   // - xsb = vector of born cross sections [user-defined units; e.g., mub/GeV/sr, nb/GeV/sr] 
+
+   // FIXME/CHECK: Have to integrate over Es too! Do we need that loop here?
+
+   const int NPTS = Ep.size(); 
+
+   bool stopCalc=false;
+   int k=0;  // track the number of iterations 
+
+   double arg=0,num=0,den=0;
+   double esInt=0,epInt=0,mott=0,xs_red=0;
+
+   std::vector<double> xsz;                // corrected cross section as a function of Ep 
+   std::vector< std::vector<double> > xsi; // corrected cross sections on each iteration 
+
+   for(int i=0;i<fNumIter;i++){
+      // loop over number of iterations
+      for(int j=0;j<NPTS;j++){
+	 // loop over Ep bins 
+         SetKinematicVariables(Es,Ep[j],th);
+	 CalculateVariables();
+	 esInt = CalculateEsIntegral(); // note: EsMin,EsMax are computed inside this function for the (Es,Ep,th) bin 
+	 epInt = CalculateEpIntegral(); // note: EpMin,EpMax are computed inside this function for the (Es,Ep,th) bin
+         mott  = fInclXS->GetMotXS(Es,th);  
+         // construct reduced cross section 
+         xs_red = xsr[j]/mott;
+         xs_cor = (xs_red - (esInt+epInt)/mott)/fCFACT; 
+         // save the corrected cross section 
+         xsz.push_back(xs_cor); 
+      }
+      // done with all points; save result of iteration 
+      xsi.push_back(xsz); 
+      // check for convergence
+      if(i>=1){ 
+	 for(int j=0;j<NPTS;j++){
+	    num = xsi[i][j]-xsi[i-1][j];
+	    den = xsi[i][j]+xsi[i-1][j];
+            arg = fabs(num)/den;
+	    if(arg<=fIterThresh){
+	       stopCalc = true;
+	    } 
+	 }
+      }
+      // set up for next iteration
+      xsz.clear(); 
+      k++; // iterate the counter of number of iterations performed  
+      // check to see if we're done  
+      if(stopCalc) break; 
+   }
+
+   std::cout << "[RadiativeCorrections::Unfold]: Calculation complete! Number of iterations: " << k << std::endl;
+   // save last iteration to the output vector xsb 
+   for(int j=0;j<NPTS;j++){
+      xsb.push_back(xsi[k-1][j]); 
+   }
+ 
+   return 0;  
 }
 //______________________________________________________________________________
 double RadiativeCorrections::GetPhi(double v){

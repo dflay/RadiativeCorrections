@@ -23,6 +23,7 @@ class RadiativeCorrections {
 
    private:
       int fVerbosity;
+      int fNumIter; 
       bool fElasticTail,fElasticApprox; 
 
       RC::thrType_t fThreshold;  // integration threshold: elastic or pion
@@ -34,6 +35,7 @@ class RadiativeCorrections {
       double fEs,fEp,fThDeg;
       double fR,fCFACT;
       double fTa,fTb,fT,fEta,fXi,fb;
+      double fIterThresh; 
 
       void CalculateB();
       void CalculateXi();
@@ -93,6 +95,12 @@ class RadiativeCorrections {
 
       void SetCrossSection(eInclusiveCrossSection *XS) { fInclXS     = XS; }
       void SetFormFactor(ElasticFormFactor *ff)        { fFormFactor = ff; }
+
+      // settings for unfolding born xs 
+      void SetNumberOfIterations(int i)                { fNumIter    = i;   }  // number of iterations 
+      void SetUnfoldingTolerance(double thr)           { fIterThresh = thr; }  // convergence threshold  
+
+      int Unfold(double Es,double th,std::vector<double> Ep,std::vector<double> xsr,std::vector<double> &xsb); 
 
       double Radiate();
       double ElasticTail_peakApprox();  
