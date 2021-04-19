@@ -17,6 +17,9 @@ void ElasticFormFactor::SetTarget(int type){
    } else if(fType==RC::Target::kCopper){
       fA = 63.546;
       fZ = 29; 
+   }else if(fType==RC::Target::kIron){
+      fA = 55.845;
+      fZ = 26; 
    }else if(fType==RC::Target::kGold){
       fA = 196.966569;
       fZ = 79;  

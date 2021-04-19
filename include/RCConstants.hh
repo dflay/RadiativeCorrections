@@ -3,7 +3,7 @@
 
 namespace RC {
    namespace Target {
-      enum targType_t { kProton, kNeutron, kH2, kH3, kHe3, kCarbon, kAluminum, kCopper, kGold };
+      enum targType_t { kProton, kNeutron, kH2, kH3, kHe3, kCarbon, kAluminum, kCopper, kIron, kGold };
    } //::Target
 
    namespace Constants { 

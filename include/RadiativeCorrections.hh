@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <vector> 
 
 #include "RCConstants.hh"
 #include "Kinematics.hh"

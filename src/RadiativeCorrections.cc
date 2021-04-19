@@ -108,7 +108,7 @@ int RadiativeCorrections::Unfold(double Es,double th,std::vector<double> Ep,std:
    int k=0;  // track the number of iterations 
 
    double arg=0,num=0,den=0;
-   double esInt=0,epInt=0,mott=0,xs_red=0;
+   double esInt=0,epInt=0,mott=0,xs_red=0,xs_cor=0;
 
    std::vector<double> xsz;                // corrected cross section as a function of Ep 
    std::vector< std::vector<double> > xsi; // corrected cross sections on each iteration 
@@ -121,7 +121,7 @@ int RadiativeCorrections::Unfold(double Es,double th,std::vector<double> Ep,std:
 	 CalculateVariables();
 	 esInt = CalculateEsIntegral(); // note: EsMin,EsMax are computed inside this function for the (Es,Ep,th) bin 
 	 epInt = CalculateEpIntegral(); // note: EpMin,EpMax are computed inside this function for the (Es,Ep,th) bin
-         mott  = fInclXS->GetMotXS(Es,th);  
+         mott  = fInclXS->GetMottXS(Es,th);  
          // construct reduced cross section 
          xs_red = xsr[j]/mott;
          xs_cor = (xs_red - (esInt+epInt)/mott)/fCFACT; 
