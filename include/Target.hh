@@ -31,12 +31,12 @@ class Target {
       void SetMass(double m)  { fMT  = m;   } 
       void SetRadiationLengths(double tb,double ta) { fTb = tb; fTa = ta; }  
 
-      double GetA()        const { return fA;   }  
-      double GetZ()        const { return fZ;   }  
-      double GetRho()      const { return fRho; }
-      double GetMass()     const { return fMT;  }  
-      double GetTb()       const { return fTb;  }  
-      double GetTa()       const { return fTa;  } 
+      double GetA()     const { return fA;   }  
+      double GetZ()     const { return fZ;   }  
+      double GetRho()   const { return fRho; }
+      double GetMass()  const { return fMT;  }  
+      double GetTb()    const { return fTb;  }  
+      double GetTa()    const { return fTa;  } 
 
 }; 
 
