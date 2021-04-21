@@ -48,7 +48,16 @@ void RadiativeCorrections::SetKinematicVariables(double Es,double Ep,double thDe
 }
 //______________________________________________________________________________
 void RadiativeCorrections::CalculateVariables(){
-   // update variables that depend on Es, Ep, th, Ta, Tb  
+   // update variables that depend on Es, Ep, th, Z, A, MT, Ta, Tb  
+   // target details  
+   if(fInclXS!=NULL){
+      fZ  = fInclXS->GetZ();
+      fA  = fInclXS->GetA();
+      fMT = fA*RC::Constants::proton_mass; 
+   }else{
+      std::cout << "[RadiativeCorrections::CalculateVariables]: NO TARGET SET!" << std::endl; 
+      std::cout << "A = " << fA << ", Z = " << fZ << ", MT = " << fMT << std::endl;
+   } 
    CalculateEta();
    CalculateB();
    CalculateXi();
@@ -57,18 +66,20 @@ void RadiativeCorrections::CalculateVariables(){
 }
 //______________________________________________________________________________
 double RadiativeCorrections::Radiate(){
-   // set important variables 
-   fZ     = fInclXS->GetZ();
-   fA     = fInclXS->GetA();
+   // set important variables
+   // target details  
+   // fZ     = fInclXS->GetZ();
+   // fA     = fInclXS->GetA();
+   // fMT    = fA*RC::Constants::proton_mass;  
+   // kinematics  
    fEs    = fInclXS->GetEs();
    fEp    = fInclXS->GetEp();
    fThDeg = fInclXS->GetTh();
-   fMT    = fA*RC::Constants::proton_mass;      // set the target mass 
    fT     = fTa + fTb;
 
-   if( (fTa==0)||(fTb==0) ){
-      std::cout << "[RadiativeCorrections::Radiate]: WARNING! Radiation lengths are zero! " << std::endl;
-   }
+   // if( (fTa==0)||(fTb==0) ){
+   //    std::cout << "[RadiativeCorrections::Radiate]: WARNING! Radiation lengths are zero! " << std::endl;
+   // }
 
    CalculateVariables(); 
 
@@ -100,21 +111,30 @@ int RadiativeCorrections::Unfold(double Es,double th,std::vector<double> Ep,std:
    // output: BORN cross section  
    // - xsb = vector of born cross sections [user-defined units; e.g., mub/GeV/sr, nb/GeV/sr] 
 
-   // FIXME/CHECK: Have to integrate over Es too! Do we need that loop here?
+   // FIXME: Need to call the correct cross section in the integrands! (i.e., the unfolded ones since this is iterative...) 
+   // - Requires using a RADIATED model => build the radiated spectra first and store to an interpolation object.  
+   // - Update the unfolded spectra on each iteration and propagate to interpolation object  
 
    const int NPTS = Ep.size(); 
 
    bool stopCalc=false;
    int k=0;  // track the number of iterations 
 
-   double arg=0,num=0,den=0;
+   double arg=0,num=0,den=0,sum=0,conv=0; 
    double esInt=0,epInt=0,mott=0,xs_red=0,xs_cor=0;
 
+   std::vector<double> v;                  // to determine convergence 
    std::vector<double> xsz;                // corrected cross section as a function of Ep 
    std::vector< std::vector<double> > xsi; // corrected cross sections on each iteration 
 
-   for(int i=0;i<fNumIter;i++){
+   // fill with the input data 
+   xsi.push_back(xsr); 
+
+   char msg[200]; 
+
+   for(int i=1;i<=fNumIter;i++){
       // loop over number of iterations
+      if(fVerbosity>1) std::cout << "[RadiativeCorrections::Unfold]: Iteration = " << i << std::endl;
       for(int j=0;j<NPTS;j++){
 	 // loop over Ep bins 
          SetKinematicVariables(Es,Ep[j],th);
@@ -123,29 +143,41 @@ int RadiativeCorrections::Unfold(double Es,double th,std::vector<double> Ep,std:
 	 epInt = CalculateEpIntegral(); // note: EpMin,EpMax are computed inside this function for the (Es,Ep,th) bin
          mott  = fInclXS->GetMottXS(Es,th);  
          // construct reduced cross section 
-         xs_red = xsr[j]/mott;
-         xs_cor = (xs_red - (esInt+epInt)/mott)/fCFACT; 
+         // xs_red = xsr[j]/mott;
+         xs_red = xsi[i-1][j]/mott;
+         xs_cor = (xs_red - (esInt+epInt)/mott)/fCFACT;  // corrected cross section 
          // save the corrected cross section 
-         xsz.push_back(xs_cor); 
+         xsz.push_back(xs_cor);
+         sprintf(msg,"   Ep = %.3lf, xs_red = %.3lf, esInt = %.3lf, epInt = %.3lf, CFACT = %.3lf, xs_cor = %.3lf",
+                 Ep[j],xs_red,esInt,epInt,fCFACT,xs_cor); 
+         if(fVerbosity>1) std::cout << msg << std::endl; 
       }
       // done with all points; save result of iteration 
       xsi.push_back(xsz); 
       // check for convergence
-      if(i>=1){ 
+      if(i>=2){ 
 	 for(int j=0;j<NPTS;j++){
-	    num = xsi[i][j]-xsi[i-1][j];
-	    den = xsi[i][j]+xsi[i-1][j];
-            arg = fabs(num)/den;
-	    if(arg<=fIterThresh){
-	       stopCalc = true;
-	    } 
+	    num  = xsi[i][j]-xsi[i-1][j];
+	    den  = xsi[i][j]+xsi[i-1][j];
+            arg  = fabs(num)/den;
+	    sum += arg;
+
 	 }
+         conv = sum/( (double)NPTS );
+	 if(conv<=fIterThresh){
+	    stopCalc = true;
+	 } 
+         sum = 0; 
       }
       // set up for next iteration
       xsz.clear(); 
       k++; // iterate the counter of number of iterations performed  
       // check to see if we're done  
-      if(stopCalc) break; 
+      if(stopCalc){
+	 sprintf(msg,"[RadiativeCorrections::Unfold]: Reached threshold of %.3lf with delta = %.3lf",fIterThresh,conv); 
+	 std::cout << msg << std::endl;
+	 break;
+      } 
    }
 
    std::cout << "[RadiativeCorrections::Unfold]: Calculation complete! Number of iterations: " << k << std::endl;
@@ -330,7 +362,7 @@ double RadiativeCorrections::EsIntegrand(const double EsPrime){
    double Sig      = fInclXS->GetBornXS();
    if(Sig!=Sig){
       std::cout << "[RadiativeCorrections::EsIntegrand]: Invalid cross section! " << std::endl;
-      exit(1);
+      return 0;
    }
    double SigTilde = FTilde*Sig;
    // first term 
@@ -363,7 +395,7 @@ double RadiativeCorrections::EpIntegrand(const double EpPrime){
    double Sig      = fInclXS->GetBornXS();
    if(Sig!=Sig){
       std::cout << "[RadiativeCorrections::EpIntegrand]: Invalid cross section! " << std::endl;
-      exit(1);
+      return 0;
    }
    double SigTilde = FTilde*Sig;
    // first term 

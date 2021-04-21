@@ -14,25 +14,31 @@
 #include <cmath>
 
 #include "RCConstants.hh"
+#include "Target.hh"
 
 class eInclusiveCrossSection {
 
    protected: 
       double fZ,fA;
-      double fEs,fEp,fTh; 	
+      double fEs,fEp,fTh;
+      
+      Target *fTgt;  
 
       void Init();
 
    public: 
       eInclusiveCrossSection();
       ~eInclusiveCrossSection();
+ 
+      void SetTarget(Target *t); 
+      void SetKinematicVariables(double Es,double Ep,double th); 
 
       void SetZ(double v)  { fZ  = v;    }
       void SetA(double v)  { fA  = v;    }
       void SetEs(double v) { fEs = v;    } 
       void SetEp(double v) { fEp = v;    }
-      void SetTh(double v) { fTh = v;    } 
-
+      void SetTh(double v) { fTh = v;    }
+     
       double GetMottXS(double,double);
       double GetZ()  const { return fZ;  }
       double GetA()  const { return fA;  }

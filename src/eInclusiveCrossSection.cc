@@ -14,6 +14,18 @@ void eInclusiveCrossSection::Init(){
    fTh = 0;
 }
 //________________________________________________________________________
+void eInclusiveCrossSection::SetTarget(Target *t){
+   fTgt = t;
+   fZ   = fTgt->GetZ();  
+   fA   = fTgt->GetA(); 
+}
+//________________________________________________________________________
+void eInclusiveCrossSection::SetKinematicVariables(double Es,double Ep,double th){
+   fEs  = Es; 
+   fEp  = Ep; 
+   fTh  = th; 
+}
+//________________________________________________________________________
 double eInclusiveCrossSection::GetMottXS(double Es,double th){
    double thr  = th*RC::Constants::deg_to_rad;
    double COS  = cos(thr/2.0);
